@@ -41,5 +41,7 @@ func main() {
 		fmt.Println(err)
 	}
 	err = json.Unmarshal(bytes, &metrics)
-	fmt.Printf("%v\n", metrics)
+	for _, metric := range metrics {
+		fmt.Printf("%v\n", metric)
+	}
 }
