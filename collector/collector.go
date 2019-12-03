@@ -141,7 +141,7 @@ func (box *PowerStore) CollectMetrics(entity string, id string, interval Interva
 // List resouces such as appliance, cluster, volume
 func (box *PowerStore) List(resource string) ([]byte, error) {
 	request := box.baseReq.Clone()
-	resp, body, errs := request.Get(box.buildURL(resource)).End()
+	resp, body, errs := request.Get(box.buildURL("/" + resource)).End()
 	ok := logErrors(errs)
 	if ok {
 		return nil, fmt.Errorf("Fail to list resouce")
@@ -150,6 +150,7 @@ func (box *PowerStore) List(resource string) ([]byte, error) {
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("Internal error, incorrect response")
 	}
+	fmt.Printf("%v\n", body)
 	return []byte(body), nil
 }
 
