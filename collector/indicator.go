@@ -26,14 +26,14 @@ var (
 		},
 		[]string{"appliance", "node"},
 	)
-	avgWritelatency = prometheus.NewGaugeVec(
+	avgWriteLatency = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "avg_write_latency",
 			Help: "Average write latency",
 		},
 		[]string{"appliance", "node"},
 	)
-	avgWriteSzie = prometheus.NewGaugeVec(
+	avgWriteSize = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "avg_write_size",
 			Help: "Average write size",
@@ -110,52 +110,52 @@ var (
 		},
 		[]string{"appliance", "node"},
 	)
-	maxAvgWriteSzie = prometheus.NewGaugeVec(
+	maxAvgWriteSize = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "max_avg_write_size",
 			Help: "Max average write size",
 		},
 		[]string{"appliance", "node"},
 	)
-	maxAvgReadIops = prometheus.NewGaugeVec(
+	maxReadIops = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "max_avg_read_iops",
-			Help: "Max average read IOPS",
+			Name: "max_read_iops",
+			Help: "Max read IOPS",
 		},
 		[]string{"appliance", "node"},
 	)
-	maxAvgReadBandwidth = prometheus.NewGaugeVec(
+	maxReadBandwidth = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "max_avg_read_bandwidth",
-			Help: "Max average read bandwidth",
+			Name: "max_read_bandwidth",
+			Help: "Max read bandwidth",
 		},
 		[]string{"appliance", "node"},
 	)
-	maxAvgTotalIops = prometheus.NewGaugeVec(
+	maxTotalIops = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "max_avg_total_iops",
-			Help: "Max average total IOPS",
+			Name: "max_total_iops",
+			Help: "Max total IOPS",
 		},
 		[]string{"appliance", "node"},
 	)
-	maxAvgTotalBandwidth = prometheus.NewGaugeVec(
+	maxTotalBandwidth = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "max_avg_total_bandwidth",
-			Help: "Max average total bandwidth",
+			Name: "max_total_bandwidth",
+			Help: "Max total bandwidth",
 		},
 		[]string{"appliance", "node"},
 	)
-	maxAvgWriteIops = prometheus.NewGaugeVec(
+	maxWriteIops = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "max_avg_write_iops",
-			Help: "Max average write IOPS",
+			Name: "max_write_iops",
+			Help: "Max write IOPS",
 		},
 		[]string{"appliance", "node"},
 	)
-	maxAvgWriteBandwidth = prometheus.NewGaugeVec(
+	maxWriteBandwidth = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "max_avg_write_bandwidth",
-			Help: "Max average write bandwidth",
+			Name: "max_write_bandwidth",
+			Help: "Max write bandwidth",
 		},
 		[]string{"appliance", "node"},
 	)
@@ -277,8 +277,8 @@ func init() {
 	prometheus.MustRegister(avgReadLatency)
 	prometheus.MustRegister(avgReadSize)
 	prometheus.MustRegister(avgLatency)
-	prometheus.MustRegister(avgWritelatency)
-	prometheus.MustRegister(avgWriteSzie)
+	prometheus.MustRegister(avgWriteLatency)
+	prometheus.MustRegister(avgWriteSize)
 	prometheus.MustRegister(avgReadIops)
 	prometheus.MustRegister(avgReadBandwidth)
 	prometheus.MustRegister(avgTotalIops)
@@ -289,13 +289,13 @@ func init() {
 	prometheus.MustRegister(maxAvgReadSize)
 	prometheus.MustRegister(maxAvgLatency)
 	prometheus.MustRegister(maxAvgWritelatency)
-	prometheus.MustRegister(maxAvgWriteSzie)
-	prometheus.MustRegister(maxAvgReadIops)
-	prometheus.MustRegister(maxAvgReadBandwidth)
-	prometheus.MustRegister(maxAvgTotalIops)
-	prometheus.MustRegister(maxAvgTotalBandwidth)
-	prometheus.MustRegister(maxAvgWriteIops)
-	prometheus.MustRegister(maxAvgWriteBandwidth)
+	prometheus.MustRegister(maxAvgWriteSize)
+	prometheus.MustRegister(maxReadIops)
+	prometheus.MustRegister(maxReadBandwidth)
+	prometheus.MustRegister(maxTotalIops)
+	prometheus.MustRegister(maxTotalBandwidth)
+	prometheus.MustRegister(maxWriteIops)
+	prometheus.MustRegister(maxWriteBandwidth)
 	prometheus.MustRegister(avgCurrentLogins)
 	prometheus.MustRegister(maxCurrentLogins)
 	prometheus.MustRegister(avgUnalignedWriteBandwidth)
