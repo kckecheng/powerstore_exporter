@@ -3,6 +3,7 @@ package collector
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/kckecheng/powerstore_exporter/powerstore"
 	"github.com/prometheus/client_golang/prometheus"
@@ -66,6 +67,20 @@ func RecordMetrics(box *powerstore.PowerStore, interval powerstore.Interval) {
 
 			// Sleep - TBD
 			// time.Sleep()
+			var h int
+			switch interval {
+			case powerstore.TwentySec:
+				h = 20
+			case powerstore.FiveMins:
+				h = 300
+			case powerstore.OneHour:
+				h = 3600
+			case powerstore.OneDay:
+				h = 3600 * 24
+			default:
+				h = 300
+			}
+			time.Sleep(time.Second * time.Duration(h))
 		}
 	}()
 }
