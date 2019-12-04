@@ -34,8 +34,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Fail to parse the configuration file")
 	}
-
-	fmt.Printf("%+v\n", cfg)
+	// fmt.Printf("%+v\n", cfg)
 
 	// Connect to the PowerStore
 	box, err := powerstore.New(cfg.PowerStore.Address, cfg.PowerStore.Port, cfg.PowerStore.User, cfg.PowerStore.Password)
