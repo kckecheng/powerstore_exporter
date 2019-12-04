@@ -2,6 +2,7 @@ package powerstore
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -150,8 +151,49 @@ func (box *PowerStore) List(resource string) ([]byte, error) {
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("Internal error, incorrect response")
 	}
-	fmt.Printf("%v\n", body)
+	// fmt.Printf("%v\n", body)
 	return []byte(body), nil
+}
+
+// ListNodes get a list of available node IDs
+func (box *PowerStore) ListNodes() ([]string, error) {
+	bytes, err := box.List("node")
+	if err != nil {
+		return nil, err
+	}
+
+	var ids []ResourceID
+	err = json.Unmarshal(bytes, &ids)
+	if err != nil {
+		return nil, err
+	}
+
+	var ret []string
+	for _, id := range ids {
+		ret = append(ret, id.ID)
+	}
+	return ret, nil
+}
+
+// GetLatestNodeMetric collect the latest metric for a node
+func (box *PowerStore) GetLatestNodeMetric(node string, interval Interval) (*NodeMetric, error) {
+	var metrics []NodeMetric
+	bytes, err := box.CollectMetrics("performance_metrics_by_node", node, interval)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(bytes, &metrics)
+	if err != nil {
+		return nil, err
+	}
+
+	numRecord := len(metrics)
+	if numRecord == 0 {
+		return nil, nil
+	}
+	// The last record is always the latest metric record for current PowerStore REST API
+	return &metrics[numRecord-1], nil
 }
 
 // Close the connection to the PowerStore
