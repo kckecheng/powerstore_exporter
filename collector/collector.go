@@ -3,35 +3,20 @@ package collector
 import (
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/kckecheng/powerstore_exporter/powerstore"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
-
-func main() {
-	// cpuTemp.Set(65.3)
-	// hdFailures.With(prometheus.Labels{"device": "/dev/sda"}).Inc()
-
-	// The Handler function provides a default handler to expose metrics
-	// via an HTTP server. "/metrics" is the usual endpoint for that.
-	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(":8080", nil))
-
-}
 
 // RecordMetrics collect and publish metrics
 func RecordMetrics(box *powerstore.PowerStore, interval powerstore.Interval) {
-	ids, err := box.ListNodes()
-	if err != nil {
-		log.Fatal("Cannot get any node on the PowerStore")
-	}
-
 	go func() {
+		ids, err := box.ListNodes()
+		if err != nil {
+			log.Fatal("Cannot get any node on the PowerStore")
+		}
+
 		for {
-			// Sleep - TBD
-			// time.Sleep()
 			for _, id := range ids {
 				metric, err := box.GetLatestNodeMetric(id, interval)
 				if err != nil {
@@ -78,6 +63,9 @@ func RecordMetrics(box *powerstore.PowerStore, interval powerstore.Interval) {
 				avgIoSize.With(prometheus.Labels{"appliance": metric.ApplianceID, "node": metric.NodeID}).Set(metric.AvgIoSize)
 				maxAvgIoSize.With(prometheus.Labels{"appliance": metric.ApplianceID, "node": metric.NodeID}).Set(metric.MaxAvgIoSize)
 			}
+
+			// Sleep - TBD
+			// time.Sleep()
 		}
 	}()
 }

@@ -1,10 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"net/http"
 
+	"github.com/kckecheng/powerstore_exporter/collector"
 	"github.com/kckecheng/powerstore_exporter/powerstore"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -14,15 +16,8 @@ func main() {
 		log.Fatal("Fail to connect to Powerstore")
 	}
 
-	ids, err := box.ListNodes()
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Printf("%+v\n", ids)
+	collector.RecordMetrics(box, powerstore.FiveMins)
 
-	metric, err := box.GetLatestNodeMetric("N1", powerstore.FiveMins)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Printf("%+v\n", *metric)
+	http.Handle("/metrics", promhttp.Handler())
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
