@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/kckecheng/powerstore_exporter/collector"
+	"github.com/kckecheng/powerstore_exporter/powerstore"
 )
 
 func main() {
-	var box *collector.PowerStore
+	var box *powerstore.PowerStore
 	var bytes []byte
 	var err error
 
-	box, err = collector.New("fnm0876.drm.lab.emc.com", 443, "admin", "Password123!")
+	box, err = powerstore.New("fnm0876.drm.lab.emc.com", 443, "admin", "Password123!")
 	defer box.Close()
 	if err != nil {
 		log.Fatal("Fail to connect to Powerstore")
@@ -25,7 +25,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	var ids []collector.ResourceID
+	var ids []powerstore.ResourceID
 	err = json.Unmarshal(bytes, &ids)
 	if err != nil {
 		fmt.Println(err)
@@ -35,8 +35,8 @@ func main() {
 	}
 
 	// Query node metrics
-	var metrics []collector.NodeMetric
-	bytes, err = box.CollectMetrics("performance_metrics_by_node", "N1", collector.OneDay)
+	var metrics []powerstore.NodeMetric
+	bytes, err = box.CollectMetrics("performance_metrics_by_node", "N1", powerstore.OneDay)
 	if err != nil {
 		fmt.Println(err)
 	}

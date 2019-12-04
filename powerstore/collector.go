@@ -1,4 +1,4 @@
-package collector
+package powerstore
 
 import (
 	"crypto/tls"
