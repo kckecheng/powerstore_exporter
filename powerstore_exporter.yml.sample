@@ -1,0 +1,14 @@
+---
+# Define PowerStore Connection Details
+powerstore:
+  address: "powerstore.local"
+  port: 443
+  user: "admin"
+  password: "admin"
+
+# Interval between scrape, PowerStore supports only 4 x values specified as string:
+# - Twenty_Sec
+# - Five_Mins
+# - One_Hour
+# - One_Day
+interval: "Five_Mins"

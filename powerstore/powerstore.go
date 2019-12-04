@@ -17,7 +17,7 @@ import (
 */
 type PowerStore struct {
 	Address  string
-	Port     uint
+	Port     int
 	User     string
 	Password string
 	baseReq  *gorequest.SuperAgent
@@ -44,7 +44,7 @@ type reqBody struct {
 }
 
 // New init the PowerStore object
-func New(address string, port uint, user string, password string) (*PowerStore, error) {
+func New(address string, port int, user string, password string) (*PowerStore, error) {
 	box := PowerStore{
 		Address:  address,
 		Port:     port,
