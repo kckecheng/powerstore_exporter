@@ -5,6 +5,11 @@ import (
 )
 
 var (
+	// apiCallTotal used to disginguish query results
+	queryTotal = prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "query_total",
+		Help: "The total number of query performed",
+	})
 	avgReadLatency = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "avg_read_latency",
@@ -274,6 +279,8 @@ var (
 )
 
 func init() {
+	prometheus.MustRegister(queryTotal)
+
 	prometheus.MustRegister(avgReadLatency)
 	prometheus.MustRegister(avgReadSize)
 	prometheus.MustRegister(avgLatency)

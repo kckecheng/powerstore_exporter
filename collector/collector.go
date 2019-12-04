@@ -18,6 +18,9 @@ func RecordMetrics(box *powerstore.PowerStore, interval powerstore.Interval) {
 		}
 
 		for {
+			// Increase the counter each time a query is performed against the backend
+			queryTotal.Inc()
+
 			for _, id := range ids {
 				metric, err := box.GetLatestNodeMetric(id, interval)
 				if err != nil {
