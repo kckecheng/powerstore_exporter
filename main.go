@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -17,6 +18,10 @@ func main() {
 	}
 
 	collector.RecordMetrics(box, powerstore.FiveMins)
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, `<html><body><h1>Metrics for PowerStore, check <a href="/metrics">metrics</a> for details<h1></body></html>`)
+	})
 
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(":8080", nil))
