@@ -43,6 +43,8 @@ func main() {
 		log.Fatal("Fail to connect to Powerstore")
 	}
 
+	log.Println("Start powerstore_exporter at port :8080, please check metrics from http://localhost:8080/metrics")
+
 	// Collect the latest node metrics
 	// collector.RecordMetrics(box, powerstore.FiveMins)
 	collector.RecordMetrics(box, powerstore.Interval(cfg.Interval))
