@@ -1,0 +1,17 @@
+---
+powerstore:
+  address: "192.168.10.10" #PowerStore IP/FQDN
+  user: "admin" # PowerStore user name
+  password: "password" # PowerStore password
+exporter:
+  resources: # Resources to collect metrics for - the more enabled, the slower the response
+    - cluster
+    - appliance
+    - node
+    - fc_port
+    - eth_port
+    - volume
+    - file_system
+  update: true # If resources list need to be updated (every 5 x minutes), only valid for volume and file_system
+  rollup: true # If the collection is rollup(collection interval): true - five minutes, false - thirty seconds
+  port: 9100 # Exporter listening port
