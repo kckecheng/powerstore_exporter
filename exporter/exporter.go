@@ -25,12 +25,18 @@ type Exporter struct {
 	ps        *powerstore.PowerStore
 }
 
-// Describe define metric desc
-func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
+func (e *Exporter) initDesc() {
 	for _, name := range e.metrics {
-		common.Logger.Infof("Init metric definition: %s", name)
+		common.Logger.Infof("Init metric definition: %s", e.metrics)
 		desc := prometheus.NewDesc(name, strings.ReplaceAll(name, "_", " "), labels, nil)
 		e.descs[name] = desc
+	}
+}
+
+// Describe define metric desc
+func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
+	e.initDesc()
+	for _, desc := range e.descs {
 		ch <- desc
 	}
 }
@@ -72,24 +78,38 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	common.Logger.Infof("Complete collecting metrics for %s", resType)
 }
 
+func detectMetricNames(ps *powerstore.PowerStore, resType, resID string) []string {
+	names := ps.DetectMetricNames(resType, resID, common.Config.Exporter.Rollup)
+	if names == nil || len(names) == 0 {
+		common.Logger.Warnf("No metric has been defined for %s", resType)
+		return nil
+	}
+
+	common.Logger.Debugf("Get original metric names: %v", names)
+	for index, name := range names {
+		names[index] = fmt.Sprintf("%s_%s", resType, name)
+	}
+	common.Logger.Debugf("Get new metric names: %v", names)
+	return names
+}
+
 // New init an exporter
 func New(ps *powerstore.PowerStore, resType string) *Exporter {
 	common.Logger.Infof("Init resources dynamically for %s", resType)
 	resources := ps.ListResources(resType)
 	if resources == nil || len(resources) == 0 {
-		common.Logger.Fatalf("No %s resource exists", resType)
+		common.Logger.Warnf("No %s resource exists", resType)
 	}
 
-	names := ps.DetectMetricNames(resType, resources[0]["id"], common.Config.Exporter.Rollup)
-	if names == nil || len(names) == 0 {
-		common.Logger.Fatalf("No metric has been defined for %s", resType)
+	// when metric names cannot be determined during initial, it needs to be refreshed periodicaly
+	names := []string{}
+	for _, res := range resources {
+		names = detectMetricNames(ps, resType, res["id"])
+		if names != nil && len(names) > 0 {
+			break
+		}
 	}
-	common.Logger.Debugf("Get original metric names: %v", names)
 
-	for index, name := range names {
-		names[index] = fmt.Sprintf("%s_%s", resType, name)
-	}
-	common.Logger.Debugf("Get new metric names: %v", names)
 	e := Exporter{
 		resType:   resType,
 		resources: resources,
@@ -115,6 +135,22 @@ func New(ps *powerstore.PowerStore, resType string) *Exporter {
 					} else {
 						e.resources = newResources
 						common.Logger.Infof("Successfully update %s resource during periodical update", resType)
+
+						// when metric names are not initialized previously, try to initialize them
+						if e.metrics == nil || len(e.metrics) == 0 {
+							common.Logger.Infof("Since there is no metric found for %s previously, try to reinitialize", e.resType)
+							names := []string{}
+							for _, res := range resources {
+								names = detectMetricNames(ps, resType, res["id"])
+								if names != nil && len(names) > 0 {
+									break
+								}
+							}
+							if names != nil && len(names) > 0 {
+								e.metrics = names
+								e.initDesc()
+							}
+						}
 					}
 					e.mutex.Unlock()
 				}
