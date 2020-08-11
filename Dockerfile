@@ -8,6 +8,6 @@ WORKDIR /build
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o powerstore_exporter .
 FROM scratch
 COPY --from=builder /build/powerstore_exporter /app/
-COPY --from=builder /build/config.yml /app
+COPY --from=builder /build/config.yml /etc/powerstre_exporter/config.yml
 WORKDIR /app
-CMD ["./powerstore_exporter", "-config", "config.yml"]
+CMD ["./powerstore_exporter", "-config", "/etc/powerstore_exporter/config.yml"]
