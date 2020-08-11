@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: powerstore-exporter-${POWERSTORE_SN}
+data:
+  config: |
+    powerstore:
+      address: "${POWERSTORE_ADDRESS}"
+      user: "${POWERSTORE_USER}"
+      password: "${POWERSTORE_PASSWORD}"
+    exporter:
+      resources: # Resources to collect metrics for - the more enabled, the slower the response
+        - cluster
+        - appliance
+        - node
+        - fc_port
+        - eth_port
+        # - volume
+        # - file_system
+      update: false # If resources list need to be updated (every 5 x minutes), only valid for volume and file_system
+      rollup: true # If the collection is rollup(collection interval): true - five minutes, false - thirty seconds
+      port: 9100 # Exporter listening port
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: powerstore-exporter-deployment-${POWERSTORE_SN}
+spec:
+  selector:
+    matchLabels:
+      app: powerstore-exporter
+      instance: ${POWERSTORE_SN}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: powerstore-exporter
+        instance: ${POWERSTORE_SN}
+    spec:
+      containers:
+      - name: powerstore-exorter
+        image: quay.io/kckecheng/powerstore_exporter
+        ports:
+          - containerPort: 9100
+            name: http
+        volumeMounts:
+          - name: configvol
+            mountPath: /etc/powerstore_exporter
+      volumes:
+        - name: configvol
+          configMap:
+            name: powerstore-exporter-${POWERSTORE_SN}
+            items:
+              - key: config
+                path: config.yml
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: powerstore-exporter-svc-${POWERSTORE_SN}
+spec:
+  selector:
+    app: powerstore-exporter
+    instance: ${POWERSTORE_SN}
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 9100
