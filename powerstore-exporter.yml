@@ -41,6 +41,9 @@ spec:
       containers:
       - name: powerstore-exorter
         image: quay.io/kckecheng/powerstore_exporter
+        env:
+          name: DEBUG
+          value: "False"
         ports:
           - containerPort: 9100
             name: http

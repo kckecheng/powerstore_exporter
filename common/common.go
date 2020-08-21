@@ -13,8 +13,6 @@ import (
 const (
 	// MAXREQ Max num. of concurrent requests
 	MAXREQ = 200
-	// DEBUG log level
-	DEBUG = false
 	// CFG default config file
 	CFG = "config.yml"
 	// ResUpdateInterval resource refresh interval in seconds
@@ -22,6 +20,8 @@ const (
 )
 
 var (
+	// DEBUG log level
+	DEBUG = false
 	// Logger global log object
 	Logger *log.Logger
 	// ReqCounter control the total num. of concurrent requests
@@ -33,6 +33,15 @@ var (
 func init() {
 	ReqCounter = make(chan int, MAXREQ)
 
+	debug, ok := os.LookupEnv("DEBUG")
+	if ok {
+		switch debug {
+		case "true", "True", "TRUE", "yes", "Yes", "YES", "y", "Y":
+			DEBUG = true
+		default:
+			DEBUG = false
+		}
+	}
 	logInit()
 }
 
